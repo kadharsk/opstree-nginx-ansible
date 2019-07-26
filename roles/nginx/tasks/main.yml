@@ -1,0 +1,56 @@
+---
+# tasks file for nginx
+- name: Install nginx and git package 
+  package: name={{ item }} state=latest 
+  with_items:
+  - nginx 
+  - git 
+  notify: start and enable nginx
+
+- name: remove html directory 
+  file: path=/var/www/html state=absent 
+
+# - name: create opstree and technoprime dirs
+#  file: name={{ item }} state=directory owner=ubuntu group=ubuntu
+#  with_items:
+#  - opstree111
+#  - technoprime111
+
+- name: download the project 
+  git: repo=https://github.com/cloudacademy/static-website-example.git dest=/var/www/{{ item }}
+  with_items:
+  - opstree111
+  - technoprime111
+
+- name: set permissions for directories 
+  shell: sudo chown -R $USER:$USER /var/www/{{ item }} 
+  with_items:
+  - opstree111
+  - technoprime111
+
+- name: copy opstree config files
+  template: src=opstree111.conf.j2 dest=/etc/nginx/sites-available/opstree111.conf
+
+- name: copy technoprime config files
+  template: src=technoprime111.conf.j2 dest=/etc/nginx/sites-available/technoprime111.conf
+
+- name: remove  default file in /etc/nginx/sites-available
+  file: path=/etc/nginx/sites-available/default state=absent
+
+- name: create a symbolic link
+  file: src=/etc/nginx/sites-available/{{ item }} dest=/etc/nginx/sites-enabled/{{ item }} state=link 
+  with_items:
+  - opstree111.conf
+  - technoprime111.conf
+
+- name: remove  default file in /etc/nginx/sites-enabled
+  file: path=/etc/nginx/sites-enabled/default state=absent
+
+- name: confiure nginx.conf
+  template: src=nginx.conf.j2 dest=/etc/nginx/nginx.conf
+
+- name: restart nginx
+  service: name=nginx state=restarted
+
+- name: check nginx 
+  shell: nginx -t   

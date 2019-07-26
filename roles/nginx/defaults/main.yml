@@ -1,0 +1,13 @@
+---
+# defaults file for nginx
+nginx_port: 80
+opstree111_access_logs: /var/log/nginx/opstree111.com.access.log
+opstree111_error_logs: /var/log/nginx/opstree111.com.error.log
+opstree111_document_root: /var/www/opstree111
+opstree111_server_name: opstree111.com
+
+technoprime111_access_logs: /var/log/nginx/technoprime1111.com.access.log
+technoprime111_error_logs: /var/log/nginx/technoprime1111.com.error.log
+technoprime111_document_root: /var/www/technoprime111
+technoprime111_server_name: technoprime1111.com
+
